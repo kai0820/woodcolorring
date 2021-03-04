@@ -4,14 +4,18 @@ local view = {}
 
 view.logical = {
     w = CC_DESIGN_RESOLUTION.width,
-    h = CC_DESIGN_RESOLUTION.height
+    h = CC_DESIGN_RESOLUTION.height,
+    width = CC_DESIGN_RESOLUTION.width,
+    height = CC_DESIGN_RESOLUTION.height,
 }
 
 -- 出于兼容性的考虑，保留 view.physical
 -- 指代设计分辨率坐标下的屏幕尺寸（长或宽有改变的设计分辨率）
 view.physical = {
     w = display.size.width,
-    h = display.size.height
+    h = display.size.height,
+    width = display.size.width,
+    height = display.size.height,
 }
 
 -- 计算 max_scale 和 min_scale

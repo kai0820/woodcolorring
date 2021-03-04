@@ -16,8 +16,10 @@ end
 
 function MainScene:onEnter()
 	UIMgr:init(self.scene)
-	local LoginMgr = require "app.ui.login.loginMgr"
-	LoginMgr:showLoginMain()
+	-- local LoginMgr = require "app.ui.login.loginMgr"
+	-- LoginMgr:showLoginMain()
+	local WoodColorRingMgr = require "app.ui.woodColorRing.woodColorRingMgr"
+	WoodColorRingMgr:showWoodColorRingMain()
 end
 
 return MainScene

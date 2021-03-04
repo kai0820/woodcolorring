@@ -14,6 +14,7 @@ GConst.OUTLINE_TYPE.C2 = cc.c4b(0x00, 0x00, 0x00, 0xff)
 GConst.OUTLINE_TYPE.C3 = cc.c4b(0x00, 0x00, 0x00, 0xff)
 
 GConst.win_size = cc.Director:getInstance():getWinSize()
+GConst.logical_size = View.logical
 
 GConst.BUTTON_EFFECT_TYPE = {
     NORMAL = 1, --常用特效

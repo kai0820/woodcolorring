@@ -183,6 +183,7 @@ function BaseUI:_setRoot(root_node, ui_data)
 	ui_root:setName("_ui_root")
 	self.root:addChild(ui_root, GConst.Z_ORDER_TOP)
 	self.ui_root = ui_root
+	GApi.drawBoundingbox(ui_root, ui_root, cc.c4f(1, 0, 0, 1))
 
 	local swallow_touches_node = GApi.createSwallowTouchesNode()
 	swallow_touches_node:setTouchEnabled(true)

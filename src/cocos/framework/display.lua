@@ -60,16 +60,10 @@ local function setDesignResolution(r, framesize)
     if r.autoscale == "FILL_ALL" then
         view:setDesignResolutionSize(framesize.width, framesize.height, cc.ResolutionPolicy.FILL_ALL)
     else
-        local scaleX, scaleY = framesize.width / r.width, framesize.height / r.height
-        local width, height = framesize.width, framesize.height
         if r.autoscale == "FIXED_WIDTH" then
-            width = framesize.width / scaleX
-            height = framesize.height / scaleX
-            view:setDesignResolutionSize(width, height, cc.ResolutionPolicy.NO_BORDER)
+            view:setDesignResolutionSize(r.width, r.height, cc.ResolutionPolicy.FIXED_WIDTH)
         elseif r.autoscale == "FIXED_HEIGHT" then
-            width = framesize.width / scaleY
-            height = framesize.height / scaleY
-            view:setDesignResolutionSize(width, height, cc.ResolutionPolicy.NO_BORDER)
+            view:setDesignResolutionSize(r.width, r.height, cc.ResolutionPolicy.FIXED_HEIGHT)
         elseif r.autoscale == "EXACT_FIT" then
             view:setDesignResolutionSize(r.width, r.height, cc.ResolutionPolicy.EXACT_FIT)
         elseif r.autoscale == "NO_BORDER" then
@@ -142,6 +136,11 @@ local function setConstants()
     printInfo(string.format("# display.right_center         = {x = %0.2f, y = %0.2f}", display.right_center.x, display.right_center.y))
     printInfo(string.format("# display.top_center           = {x = %0.2f, y = %0.2f}", display.top_center.x, display.top_center.y))
     printInfo(string.format("# display.top_bottom           = {x = %0.2f, y = %0.2f}", display.top_bottom.x, display.top_bottom.y))
+
+    printInfo(string.format("# display.safe_rect.left     = %0.2f", display.safe_rect.left))
+    printInfo(string.format("# display.safe_rect.bottom   = %0.2f", display.safe_rect.bottom))
+    printInfo(string.format("# display.safe_rect.right    = %0.2f", display.safe_rect.right))
+    printInfo(string.format("# display.safe_rect.top      = %0.2f", display.safe_rect.top))
     printInfo("#")
 end
 

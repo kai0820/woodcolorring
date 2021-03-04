@@ -34,12 +34,12 @@ function __G__TRACKBACK__(msg)
     release_print("----------------------------------------")
 end
 
--- if DEBUG > 1 then
---     local debugXpCall = nil
---     local socketHandle = nil
---     socketHandle, debugXpCall = require("debug.LuaDebugjit")("localhost", 7003, true) 
---     cc.Director:getInstance():getScheduler():scheduleScriptFunc(socketHandle, 0.1, false)
--- end
+if DEBUG > 1 then
+    local debugXpCall = nil
+    local socketHandle = nil
+    socketHandle, debugXpCall = require("debug.LuaDebugjit")("localhost", 7003, true) 
+    cc.Director:getInstance():getScheduler():scheduleScriptFunc(socketHandle, 0.1, false)
+end
 -- if DEBUG > 1 then
 -- 	release_print('debug only enabled when debug and no-crypto') 
 -- 	local debugXpCall = nil
@@ -56,8 +56,9 @@ local function main()
 	collectgarbage("setpause", 100)
     collectgarbage("setstepmul", 5000)
 
+	math.randomseed(tonumber(tostring(os.time()):reverse():sub(1,6)))
+
     -- fps stats
-    
     cc.Director:getInstance():setDisplayStats(CC_SHOW_FPS)
 
     Game = require "app.game"
