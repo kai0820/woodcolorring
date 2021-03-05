@@ -46,9 +46,9 @@ set(res_script_folders
     "${COCOS2DX_ROOT_PATH}/cocos/scripting/lua-bindings/script"
     )
 if(APPLE OR VS)
-    cocos_mark_multi_resources(res_res RES_TO "Resources/res" FOLDERS ${res_res_folders})
-    cocos_mark_multi_resources(res_src RES_TO "Resources/src" FOLDERS ${res_src_folders})
-    cocos_mark_multi_resources(res_script RES_TO "Resources/src/cocos" FOLDERS ${res_script_folders})
+    cocos_mark_multi_resources(res_res RES_TO "res" FOLDERS ${res_res_folders})
+    cocos_mark_multi_resources(res_src RES_TO "src" FOLDERS ${res_src_folders})
+    cocos_mark_multi_resources(res_script RES_TO "src/cocos" FOLDERS ${res_script_folders})
     set(cc_common_res ${res_res} ${res_src} ${res_script})
 endif()
 
