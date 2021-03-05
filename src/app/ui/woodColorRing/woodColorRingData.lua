@@ -1,8 +1,6 @@
 local WoodColorRingData = {}
--- WoodColorRingData.COMPOSE_SCORE = 100
--- WoodColorRingData.SMALL_SCORE = 2000
-WoodColorRingData.COMPOSE_SCORE = 0
-WoodColorRingData.SMALL_SCORE = 0
+
+local WoodColorRingCfg = require "app.ui.test.woodColorRing.woodColorRingCfg"
 
 function WoodColorRingData:init()
 	self._socre = 0
@@ -69,23 +67,31 @@ function WoodColorRingData:updateAllCellData(data)
 		midNum = v[2] == 1 and 0 or midNum
 		smallNum = v[3] == 1 and 0 or smallNum
 
-		local newData = bigNum*100 + midNum*10 + smallNum
+		local newData = bigNum*10000 + midNum*100 + smallNum
 		self:setCellDataByIdx(k, newData)
 	end
 end
 
 function WoodColorRingData:isSmallOpen()
-	if self._socre >= self.SMALL_SCORE then
+	if self._socre >= WoodColorRingCfg.SMALL_SCORE then
 		return true
 	end
 	return false
 end
 
 function WoodColorRingData:isComposeOpen()
-	if self._socre >= self.COMPOSE_SCORE then
+	if self._socre >= WoodColorRingCfg.COMPOSE_SCORE then
 		return true
 	end
 	return false
+end
+
+function WoodColorRingData:getMaxColorNum()
+	for i,v in ipairs(WoodColorRingCfg.MAX_COLOR_NUM) do
+		if self._socre >= v[1] then
+			return v[2]
+		end
+	end
 end
 
 return WoodColorRingData

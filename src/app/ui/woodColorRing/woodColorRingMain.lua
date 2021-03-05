@@ -3,6 +3,7 @@ local WoodColorRingMain = class("WoodColorRingMain", BaseUI)
 local WoodColorRingCore = require "app.ui.test.woodColorRing.woodColorRingCore"
 local WoodColorRingData = require "app.ui.test.woodColorRing.woodColorRingData"
 local WoodColorRingUtil = require "app.ui.test.woodColorRing.woodColorRingUtil"
+local WoodColorRingCfg = require "app.ui.test.woodColorRing.woodColorRingCfg"
 
 WoodColorRingMain.RES = {
 	[ResMgr.RES_TYPE.PLIST] = {
@@ -35,19 +36,16 @@ end
 
 function WoodColorRingMain:ctor(uiParams)
 	self.uiParams = uiParams
-	self.topBgSize = cc.size(320, 320)
-	self.bottomBgSize = cc.size(320, 120)
-	self.cellSize = cc.size(100, 100)
 	self.allPos = {
-		cc.p(self.topBgSize.width*0.5 - 100, self.topBgSize.height*0.5 + 100),
-		cc.p(self.topBgSize.width*0.5, self.topBgSize.height*0.5 + 100),
-		cc.p(self.topBgSize.width*0.5 + 100, self.topBgSize.height*0.5 + 100),
-		cc.p(self.topBgSize.width*0.5 - 100, self.topBgSize.height*0.5),
-		cc.p(self.topBgSize.width*0.5, self.topBgSize.height*0.5),
-		cc.p(self.topBgSize.width*0.5 + 100, self.topBgSize.height*0.5),
-		cc.p(self.topBgSize.width*0.5 - 100, self.topBgSize.height*0.5 - 100),
-		cc.p(self.topBgSize.width*0.5, self.topBgSize.height*0.5 - 100),
-		cc.p(self.topBgSize.width*0.5 + 100, self.topBgSize.height*0.5 - 100),
+		cc.p(WoodColorRingCfg.TOP_BG_SIZE.width*0.5 - 100, WoodColorRingCfg.TOP_BG_SIZE.height*0.5 + 100),
+		cc.p(WoodColorRingCfg.TOP_BG_SIZE.width*0.5, WoodColorRingCfg.TOP_BG_SIZE.height*0.5 + 100),
+		cc.p(WoodColorRingCfg.TOP_BG_SIZE.width*0.5 + 100, WoodColorRingCfg.TOP_BG_SIZE.height*0.5 + 100),
+		cc.p(WoodColorRingCfg.TOP_BG_SIZE.width*0.5 - 100, WoodColorRingCfg.TOP_BG_SIZE.height*0.5),
+		cc.p(WoodColorRingCfg.TOP_BG_SIZE.width*0.5, WoodColorRingCfg.TOP_BG_SIZE.height*0.5),
+		cc.p(WoodColorRingCfg.TOP_BG_SIZE.width*0.5 + 100, WoodColorRingCfg.TOP_BG_SIZE.height*0.5),
+		cc.p(WoodColorRingCfg.TOP_BG_SIZE.width*0.5 - 100, WoodColorRingCfg.TOP_BG_SIZE.height*0.5 - 100),
+		cc.p(WoodColorRingCfg.TOP_BG_SIZE.width*0.5, WoodColorRingCfg.TOP_BG_SIZE.height*0.5 - 100),
+		cc.p(WoodColorRingCfg.TOP_BG_SIZE.width*0.5 + 100, WoodColorRingCfg.TOP_BG_SIZE.height*0.5 - 100),
 	}
 end
 
@@ -70,6 +68,10 @@ function WoodColorRingMain:initUI()
 	-- closeBtn:addClickEventListener(function(sender)
 	-- 	self:handleBackEvent()
 	-- end)
+
+	local boardBg = fs.Image:create("common/common_bg_2.png")
+	self.root:addChild(boardBg)
+	self:scaleBGMgr(boardBg)
 
 	local params = {}
     params.str = 0
@@ -95,21 +97,21 @@ end
 function WoodColorRingMain:initBG()
 	local boardTop = fs.Image:create("common/public_item_box_2.png")
 	boardTop:setScale9Enabled(true)
-	boardTop:setContentSize(self.topBgSize)
+	boardTop:setContentSize(WoodColorRingCfg.TOP_BG_SIZE)
 	boardTop:setPosition(cc.p(GConst.logical_size.width*0.5, GConst.logical_size.height*0.5 + 100))
 	self.ui_root:addChild(boardTop)
 	self.boardTop = boardTop
 
 	local boardBottom = fs.Image:create("common/public_item_box_2.png")
 	boardBottom:setScale9Enabled(true)
-	boardBottom:setContentSize(self.bottomBgSize)
+	boardBottom:setContentSize(WoodColorRingCfg.BOTTOM_BG_SIZE)
 	boardBottom:setPosition(cc.p(GConst.logical_size.width*0.5, GConst.logical_size.height*0.5 - 200))
 	self.ui_root:addChild(boardBottom)
 	self.boardBottom = boardBottom
 
 	for i,v in ipairs(self.allPos) do
 		local widget = fs.Widget:create()
-		widget:setContentSize(self.cellSize)
+		widget:setContentSize(WoodColorRingCfg.CELL_SIZE)
 		widget:setPosition(self.allPos[i])
 		widget:setName("widget" .. i)
 		self.boardTop:addChild(widget)
@@ -130,7 +132,7 @@ function WoodColorRingMain:updateCell(idx)
 	local data = WoodColorRingData:getCellDataByIdx(idx)
 	local cell = self:createNewCell(data)
 	cell:setName("cell")
-	cell:setPosition(cc.p(self.cellSize.width*0.5, self.cellSize.height*0.5))
+	cell:setPosition(cc.p(WoodColorRingCfg.CELL_SIZE.width*0.5, WoodColorRingCfg.CELL_SIZE.height*0.5))
 	widget:addChild(cell)
 end
 
@@ -151,10 +153,10 @@ function WoodColorRingMain:checkChangePos(pos)
     for i,v in ipairs(self.allPos) do
         local node_pos = self.boardTop:convertToNodeSpace(pos)
         local item_pos_x, item_pos_y = v.x, v.y
-        local min_x = item_pos_x - self.cellSize.width/2
-        local max_x = item_pos_x + self.cellSize.width/2
-        local min_y = item_pos_y - self.cellSize.height/2
-        local max_y = item_pos_y + self.cellSize.height/2
+        local min_x = item_pos_x - WoodColorRingCfg.CELL_SIZE.width/2
+        local max_x = item_pos_x + WoodColorRingCfg.CELL_SIZE.width/2
+        local min_y = item_pos_y - WoodColorRingCfg.CELL_SIZE.height/2
+        local max_y = item_pos_y + WoodColorRingCfg.CELL_SIZE.height/2
         if node_pos.x >= min_x and node_pos.x <= max_x and node_pos.y >= min_y and node_pos.y <= max_y then
             newIdx = i
             break
@@ -214,7 +216,7 @@ function WoodColorRingMain:gameControl()
 
 	self.newCellData = data
 	local newCell = self:createNewCell(data)
-	newCell:setPosition(self.bottomBgSize.width*0.5, self.bottomBgSize.height*0.5)
+	newCell:setPosition(WoodColorRingCfg.BOTTOM_BG_SIZE.width*0.5, WoodColorRingCfg.BOTTOM_BG_SIZE.height*0.5)
 	self.boardBottom:addChild(newCell)
 
 	self.newCell = newCell

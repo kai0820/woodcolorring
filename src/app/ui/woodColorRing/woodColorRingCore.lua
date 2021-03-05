@@ -1,6 +1,8 @@
-local WoodColorRingData = require "app.ui.test.woodColorRing.woodColorRingData"
-
 local WoodColorRingCore = {}
+
+local WoodColorRingData = require "app.ui.test.woodColorRing.woodColorRingData"
+local WoodColorRingUtil = require "app.ui.test.woodColorRing.woodColorRingUtil"
+
 WoodColorRingCore.COLOR = {
 	COLOR1 = 1,
 	COLOR2 = 2,
@@ -74,15 +76,11 @@ function WoodColorRingCore:randomOne()
 	local bigCellNum, midCellNum, smallCellNum = 0, 0, 0
 	local randomNum = {}
 	for i,v in ipairs(cellData) do
-		local bigNum = math.floor(v/100)
-		local midNum = math.floor((v%100)/10)
-		local smallNum = v%10
+		local bigNum, midNum, smallNum = WoodColorRingUtil:getDataInfo(v)
 		if bigNum <= 0 then
-			-- bigCellNum = bigCellNum + 1
 			table.insert(randomNum, WoodColorRingCore.COMPOSE.BIG)
 		end
 		if midNum <= 0 then
-			-- midCellNum = midCellNum + 1
 			table.insert(randomNum, WoodColorRingCore.COMPOSE.MID)
 		end
 		if WoodColorRingData:isComposeOpen() then
@@ -92,7 +90,6 @@ function WoodColorRingCore:randomOne()
 		end
 		if WoodColorRingData:isSmallOpen() then
 			if smallNum <= 0 then
-				-- smallCellNum = smallCellNum + 1
 				table.insert(randomNum, WoodColorRingCore.COMPOSE.SMALL)
 			end
 			if WoodColorRingData:isComposeOpen() then
@@ -111,17 +108,17 @@ function WoodColorRingCore:randomOne()
 		local color1 = self:randomOneColor()
 		local data = 0
 		if one == WoodColorRingCore.COMPOSE.BIG then
-			data = color*100
+			data = color*10000
 		elseif one == WoodColorRingCore.COMPOSE.MID then
-			data = color*10
+			data = color*100
 		elseif one == WoodColorRingCore.COMPOSE.SMALL then
 			data = color
 		elseif one == WoodColorRingCore.COMPOSE.BIG_AND_MID then
-			data = color*100 + color1*10
+			data = color*10000 + color1*100
 		elseif one == WoodColorRingCore.COMPOSE.BIG_AND_SMALL then
-			data = color*100 + color1
+			data = color*10000 + color1
 		elseif one == WoodColorRingCore.COMPOSE.MID_AND_SMALL then
-			data = color*10 + color1
+			data = color*100 + color1
 		end
 		return data
 	end
@@ -129,8 +126,8 @@ function WoodColorRingCore:randomOne()
 end
 
 function WoodColorRingCore:randomOneColor()
-	-- return math.random(1, #WoodColorRingCore.COLOR)
-	return math.random(1, WoodColorRingCore.MAX_COLOR)
+	local maxColorNum = WoodColorRingData:getMaxColorNum()
+	return math.random(1, maxColorNum)
 end
 
 function WoodColorRingCore:isEnd()
