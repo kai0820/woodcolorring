@@ -1,13 +1,17 @@
 local WoodColorRingUtil = {}
 
-local WoodColorRingCore = require "app.ui.test.woodColorRing.woodColorRingCore"
-local WoodColorRingCfg = require "app.ui.test.woodColorRing.woodColorRingCfg"
+local WoodColorRingCfg = require "app.ui.woodColorRing.woodColorRingCfg"
 
 function WoodColorRingUtil:getDataInfo(data)
 	local bigNum = math.floor(data/10000)
 	local midNum = math.floor((data%10000)/100)
 	local smallNum = data%100
 	return bigNum, midNum, smallNum
+end
+
+function WoodColorRingUtil:composeData(bigNum, midNum, smallNum)
+	local newData = bigNum*10000 + midNum*100 + smallNum
+	return newData
 end
 
 function WoodColorRingUtil:createCell(data)

@@ -1,6 +1,7 @@
 local WoodColorRingData = {}
 
-local WoodColorRingCfg = require "app.ui.test.woodColorRing.woodColorRingCfg"
+local WoodColorRingCfg = require "app.ui.woodColorRing.woodColorRingCfg"
+local WoodColorRingUtil = require "app.ui.woodColorRing.woodColorRingUtil"
 
 function WoodColorRingData:init()
 	self._socre = 0
@@ -30,9 +31,7 @@ function WoodColorRingData:getCellDataByIdx(idx)
 end
 
 function WoodColorRingData:getCellInfoByIdx(idx)
-	local bigNum = math.floor(self._cellData[idx]/100)
-	local midNum = math.floor((self._cellData[idx]%100)/10)
-	local smallNum = self._cellData[idx]%10
+	local bigNum, midNum, smallNum = WoodColorRingUtil:getDataInfo(self._cellData[idx])
 	return bigNum, midNum, smallNum
 end
 
@@ -45,13 +44,9 @@ function WoodColorRingData:mergeCellDataByIdx(idx, data)
 end
 
 function WoodColorRingData:checkCellDataByIdx(idx, data)
-	local bigNum = math.floor(self._cellData[idx]/100)
-	local midNum = math.floor((self._cellData[idx]%100)/10)
-	local smallNum = self._cellData[idx]%10
+	local bigNum, midNum, smallNum = self:getCellInfoByIdx(idx)
+	local bigNum1, midNum1, smallNum1 = WoodColorRingUtil:getDataInfo(data)
 
-	local bigNum1 = math.floor(data/100)
-	local midNum1 = math.floor((data%100)/10)
-	local smallNum1 = data%10
 	if (bigNum > 0 and bigNum1 > 0) or
 		(midNum > 0 and midNum1 > 0) or
 		(smallNum > 0 and smallNum1 > 0) then
@@ -63,13 +58,25 @@ end
 function WoodColorRingData:updateAllCellData(data)
 	for k,v in pairs(data) do
 		local bigNum, midNum, smallNum = self:getCellInfoByIdx(k)
+
 		bigNum = v[1] == 1 and 0 or bigNum
 		midNum = v[2] == 1 and 0 or midNum
 		smallNum = v[3] == 1 and 0 or smallNum
 
-		local newData = bigNum*10000 + midNum*100 + smallNum
+		local newData = WoodColorRingUtil:composeData(bigNum, midNum, smallNum)
 		self:setCellDataByIdx(k, newData)
 	end
+end
+
+function WoodColorRingData:updateAllScore(data)
+	local num = 0
+	for k,v in pairs(data) do
+		for ii, vv in ipairs(v) do
+			num = num + vv
+		end
+	end
+	local score = num*10
+	self:addScore(score)
 end
 
 function WoodColorRingData:isSmallOpen()

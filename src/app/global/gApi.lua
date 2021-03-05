@@ -125,7 +125,7 @@ function GApi.drawBoundingbox(container, n, borderColor)
 	if DEBUG < 1 then
 		return
 	end
-	borderColor = borderColor or cc.c4f(0, 0, 0, 0.5)
+	borderColor = borderColor or cc.c4f(0, 1, 0, 0.5)
 	local dn = CCDrawNode:create()
 	local fillColor = cc.c4f(0, 0, 0, 0)
 	local rect1 = n:getBoundingBox()

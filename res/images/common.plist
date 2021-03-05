@@ -679,7 +679,7 @@
                 <key>textureRotated</key>
                 <false/>
             </dict>
-            <key>common/public_item_box_5.png</key>
+            <key>common/public_item_box_2.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
@@ -708,7 +708,7 @@
             <key>size</key>
             <string>{1016,1260}</string>
             <key>smartupdate</key>
-            <string>$TexturePacker:SmartUpdate:fa50b5df284da05186c5d7e4f8985042:c110a49536c5c0fc76892c53bb867a1e:1f55903e2927f6cb72c625c6a594708e$</string>
+            <string>$TexturePacker:SmartUpdate:7d6e1bdc365e99969df9e22a0368dca6:8364077b14ddce5601d4806307325e97:1f55903e2927f6cb72c625c6a594708e$</string>
             <key>textureFileName</key>
             <string>common.png</string>
         </dict>

@@ -1,7 +1,7 @@
 local WoodColorRingCore = {}
 
-local WoodColorRingData = require "app.ui.test.woodColorRing.woodColorRingData"
-local WoodColorRingUtil = require "app.ui.test.woodColorRing.woodColorRingUtil"
+local WoodColorRingData = require "app.ui.woodColorRing.woodColorRingData"
+local WoodColorRingUtil = require "app.ui.woodColorRing.woodColorRingUtil"
 
 WoodColorRingCore.COLOR = {
 	COLOR1 = 1,
