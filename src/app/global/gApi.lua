@@ -149,4 +149,28 @@ function GApi.drawBoundingbox(container, n, borderColor)
 	container:addChild(dn, GConst.Z_ORDER_TOP)
 end
 
+function GApi.showToast(text)
+    local Toast = require "app.ui.uiHelper.toast"
+    Toast:showToast(text)
+end
+
+function GApi.schedule(node, param1, param2)
+    if type(param1) == "function" then
+        if not node or tolua.isnull(node) then return end
+        node:runAction(cc.CallFunc:create(param1))
+    elseif node ~= nil then
+        if not node or tolua.isnull(node) then return end
+        node:runAction(cc.Sequence:create(
+            cc.DelayTime:create(param1),
+            cc.CallFunc:create(param2)
+        ))
+    elseif node == nil then
+        local scene = Director:getRunningScene()
+        scene:runAction(cc.Sequence:create(
+            cc.DelayTime:create(param1),
+            cc.CallFunc:create(param2)
+        ))
+    end
+end
+
 return GApi

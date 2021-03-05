@@ -75,24 +75,28 @@ function WoodColorRingMain:initUI()
 	self:scaleBGMgr(boardBg)
 
 	local params = {}
-    params.str = 0
-    params.size = 26
+    params.str = "积分：" .. 0
+    params.size = 50
     params.color = GConst.COLOR_TYPE.C3
     -- params.outline_color = self.outline_color
 	local label = LabHper:createFontTTF(params)
-	label:setPosition(cc.p(GConst.logical_size.width*0.5, GConst.logical_size.height - 60))
+	label:setAnchorPoint(cc.p(0, 0.5))
+	local width = GConst.logical_size.width*0.5 - WoodColorRingCfg.TOP_BG_SIZE.width*0.5
+	local height = GConst.logical_size.height*0.5 + 250 + WoodColorRingCfg.TOP_BG_SIZE.height*0.5
+	label:setPosition(cc.p(width, height))
 	self.ui_root:addChild(label)
 	self.scoreLab = label
 
-    local params = {}
-    params.str = "开始"
-    params.size = 22
-    params.color = GConst.COLOR_TYPE.C2
-    -- params.outline_color = self.outline_color
-	local label = LabHper:createFontTTF(params)
-	label:setPosition(cc.p(GConst.logical_size.width*0.5, GConst.logical_size.height - 110))
-	self.ui_root:addChild(label)
-	self.errorLab = label
+	local params = {}
+	params.nor = "common/public_btn_refresh.png"
+	local refreshBtn = fs.Button:create(params)
+	refreshBtn:addClickEventListener(function(sender)
+		self:gameControl()
+	end)
+	refreshBtn:setAnchorPoint(cc.p(1, 0.5))
+	local width = GConst.logical_size.width*0.5 + WoodColorRingCfg.TOP_BG_SIZE.width*0.5
+	refreshBtn:setPosition(width, height)
+	self.ui_root:addChild(refreshBtn)
 end
 
 function WoodColorRingMain:initBG()
@@ -229,7 +233,7 @@ end
 
 function WoodColorRingMain:gameEnd()
 	print("播放结束动画")
-	self.errorLab:setString("game over")
+	GApi.showToast("game over")
 	-- CustomEventManager:dispatchEvent(CustomEventManager.CUSTOM_EVENT.UI_EVENT_TEST, {num = self.num})
 end
 
@@ -248,25 +252,33 @@ function WoodColorRingMain:gameCheck()
 
 		local check, data = WoodColorRingCore:checkEliminate(self.newIdx)
 		if check then
-			-- 更新每个格子的数据
-			WoodColorRingData:updateAllCellData(data)
-			-- 更新这次消除的积分
-			WoodColorRingData:updateAllScore(data)
-			-- 更新格子
-			for k,v in pairs(data) do
-				self:updateCell(k)
-			end
+			GApi.showToast("播放动画")
+			GApi.schedule(self.ui_root, 0.5, function ()
+				self:getPoints(data)
+			end)
 		end
 
 		self.newIdx = nil
 		self:gameControl()
 	else
-		print("有问题")
-		self.errorLab:setString("有问题")
 		self.newCell:setVisible(true)
 	end
+	-- local socre = WoodColorRingData:getScore()
+	-- self.scoreLab:setString(socre)
+end
+
+function WoodColorRingMain:getPoints(data)
+	-- 更新每个格子的数据
+	WoodColorRingData:updateAllCellData(data)
+	-- 更新这次消除的积分
+	WoodColorRingData:updateAllScore(data)
+	-- 更新格子
+	for k,v in pairs(data) do
+		self:updateCell(k)
+	end
+
 	local socre = WoodColorRingData:getScore()
-	self.scoreLab:setString(socre)
+	self.scoreLab:setString("积分：" .. socre)
 end
 
 return WoodColorRingMain
