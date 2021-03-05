@@ -173,4 +173,10 @@ function GApi.schedule(node, param1, param2)
     end
 end
 
+function GApi.getAngleByPos(p1, p2)
+	local p = cc.pSub(p2, p1)
+	local angle = math.radian2angle(math.atan2(p.x, p.y))
+	return angle - 90
+end
+
 return GApi

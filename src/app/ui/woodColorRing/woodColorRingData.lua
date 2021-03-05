@@ -94,11 +94,12 @@ function WoodColorRingData:isComposeOpen()
 end
 
 function WoodColorRingData:getMaxColorNum()
-	for i,v in ipairs(WoodColorRingCfg.MAX_COLOR_NUM) do
-		if self._socre >= v[1] then
-			return v[2]
-		end
-	end
+	-- for i,v in ipairs(WoodColorRingCfg.MAX_COLOR_NUM) do
+	-- 	if self._socre >= v[1] then
+	-- 		return v[2]
+	-- 	end
+	-- end
+	return 1
 end
 
 return WoodColorRingData
