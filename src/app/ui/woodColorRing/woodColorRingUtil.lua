@@ -62,4 +62,13 @@ function WoodColorRingUtil:createCellColor(color, ntype)
 	return cellImage
 end
 
+function WoodColorRingUtil:getRotation(p1, p2)
+	local angle = GApi.getAngleByPos(p1,p2)
+	local dis = cc.pGetDistance(p1, p2)
+	-- line_ani:setScaleX(dis/150)
+	-- line_ani:setPosition(pos1)
+	-- line_ani:setRotation(angle)
+	return angle
+end
+
 return WoodColorRingUtil

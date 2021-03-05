@@ -142,6 +142,7 @@ function WoodColorRingCore:checkEliminate(idx)
 	local checkRange = WoodColorRingCore.CHECK_RANGE[idx]
 	local bigNum, midNum, smallNum = WoodColorRingData:getCellInfoByIdx(idx)
 	local eliminatePos = {}
+	local eliminateLine = {}
 	local isEliminate = false
 	if bigNum ~= 0 and bigNum == midNum and bigNum == smallNum then
 		eliminatePos[idx] = {1, 1, 1}
@@ -165,7 +166,8 @@ function WoodColorRingCore:checkEliminate(idx)
 
 		local eliminateNum = {}
 		local needEliminate = false
-		for i = 1, WoodColorRingCore.MAX_COLOR do
+		local maxColorNum = WoodColorRingData:getMaxColorNum()
+		for i = 1, maxColorNum do
 			if inNum[i] and inNum[i] >= 3 then
 				eliminateNum[i] = true
 				needEliminate = true
@@ -173,6 +175,7 @@ function WoodColorRingCore:checkEliminate(idx)
 		end
 
 		if needEliminate then
+			table.insert(eliminateLine, v)
 			isEliminate = true
 			for ii,vv in ipairs(v) do
 				eliminatePos[vv] = {0, 0, 0}
@@ -189,7 +192,7 @@ function WoodColorRingCore:checkEliminate(idx)
 			end
 		end
 	end
-	return isEliminate, eliminatePos
+	return isEliminate, eliminatePos, eliminateLine
 end
 
 return WoodColorRingCore

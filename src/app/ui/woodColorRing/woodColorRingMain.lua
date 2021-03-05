@@ -97,6 +97,19 @@ function WoodColorRingMain:initUI()
 	local width = GConst.logical_size.width*0.5 + WoodColorRingCfg.TOP_BG_SIZE.width*0.5
 	refreshBtn:setPosition(width, height)
 	self.ui_root:addChild(refreshBtn)
+
+	local params = {}
+	params.nor = "common/public_btn_refresh.png"
+	local restartBtn = fs.Button:create(params)
+	restartBtn:addClickEventListener(function(sender)
+		GApi.showToast("重新开始")
+		self:gameRestart()
+	end)
+	restartBtn:setColor(cc.c3b(255, 0, 0))
+	restartBtn:setAnchorPoint(cc.p(1, 0.5))
+	local width = GConst.logical_size.width*0.5 + WoodColorRingCfg.TOP_BG_SIZE.width*0.5 - 66
+	restartBtn:setPosition(width, height)
+	self.ui_root:addChild(restartBtn)
 end
 
 function WoodColorRingMain:initBG()
@@ -129,16 +142,15 @@ function WoodColorRingMain:initBG()
 end
 
 function WoodColorRingMain:updateCell(idx)
-	local widget = self.boardTop:getChildByName("widget" .. idx)
-	local cell = widget:getChildByName("cell")
+	local cell = self.gameNode:getChildByName("cell" .. idx)
 	if cell and not tolua.isnull(cell) then
 		cell:removeFromParent()
 	end
 	local data = WoodColorRingData:getCellDataByIdx(idx)
 	local cell = self:createNewCell(data)
-	cell:setName("cell")
-	cell:setPosition(cc.p(WoodColorRingCfg.CELL_SIZE.width*0.5, WoodColorRingCfg.CELL_SIZE.height*0.5))
-	widget:addChild(cell)
+	cell:setName("cell" .. idx)
+	cell:setPosition(self.allPos[idx])
+	self.gameNode:addChild(cell)
 end
 
 function WoodColorRingMain:removeNewCell(newCell)
@@ -156,7 +168,7 @@ end
 function WoodColorRingMain:checkChangePos(pos)
     local newIdx
     for i,v in ipairs(self.allPos) do
-        local node_pos = self.boardTop:convertToNodeSpace(pos)
+        local node_pos = self.gameNode:convertToNodeSpace(pos)
         local item_pos_x, item_pos_y = v.x, v.y
         local min_x = item_pos_x - WoodColorRingCfg.CELL_SIZE.width/2
         local max_x = item_pos_x + WoodColorRingCfg.CELL_SIZE.width/2
@@ -239,7 +251,7 @@ end
 
 function WoodColorRingMain:gameRestart()
 	self.gameNode:removeAllChildren()
-	WoodColorRingData:init()
+	self:initData()
 
 	self:gameControl()
 end
@@ -250,11 +262,12 @@ function WoodColorRingMain:gameCheck()
 		WoodColorRingData:mergeCellDataByIdx(self.newIdx, self.newCellData)
 		self:updateCell(self.newIdx)
 
-		local check, data = WoodColorRingCore:checkEliminate(self.newIdx)
+		local check, eliminatePos, eliminateLine = WoodColorRingCore:checkEliminate(self.newIdx)
 		if check then
-			GApi.showToast("播放动画")
+			-- GApi.showToast("播放动画")
+			self:playAction(eliminateLine)
 			GApi.schedule(self.ui_root, 0.5, function ()
-				self:getPoints(data)
+				self:getPoints(eliminatePos)
 			end)
 		end
 
@@ -263,8 +276,29 @@ function WoodColorRingMain:gameCheck()
 	else
 		self.newCell:setVisible(true)
 	end
-	-- local socre = WoodColorRingData:getScore()
-	-- self.scoreLab:setString(socre)
+
+	self:updateScore()
+end
+
+function WoodColorRingMain:playAction(eliminateLine)
+	for i,v in ipairs(eliminateLine) do
+		local cellId = 0
+		for ii,vv in ipairs(v) do
+			cellId = cellId + vv
+		end
+		local cellId = cellId/3
+		local lineImg = fs.Image:create("common/progress_line.png")
+		lineImg:setScale9Enabled(true)
+		lineImg:setContentSize(cc.size(WoodColorRingCfg.TOP_BG_SIZE.width, 22))
+		lineImg:setPosition(self.allPos[cellId])
+		self.gameNode:addChild(lineImg)
+
+		lineImg:runAction(cc.Sequence:create(cc.DelayTime:create(0.5), cc.RemoveSelf:create()))
+
+		local angle = WoodColorRingUtil:getRotation(self.allPos[v[1]], self.allPos[v[3]])
+		lineImg:setPosition(self.allPos[v[2]])
+		lineImg:setRotation(angle)
+	end
 end
 
 function WoodColorRingMain:getPoints(data)
@@ -277,6 +311,10 @@ function WoodColorRingMain:getPoints(data)
 		self:updateCell(k)
 	end
 
+	self:updateScore()
+end
+
+function WoodColorRingMain:updateScore()
 	local socre = WoodColorRingData:getScore()
 	self.scoreLab:setString("积分：" .. socre)
 end
