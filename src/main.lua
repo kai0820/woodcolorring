@@ -37,16 +37,14 @@ end
 if DEBUG > 1 then
     local debugXpCall = nil
     local socketHandle = nil
-    socketHandle, debugXpCall = require("debug.LuaDebugjit")("localhost", 7003, true) 
-    cc.Director:getInstance():getScheduler():scheduleScriptFunc(socketHandle, 0.1, false)
+	if cc.Application:getInstance():getTargetPlatform() == cc.PLATFORM_OS_MAC then
+		socketHandle, debugXpCall = require("debug.LuaDebug")("localhost", 7003) 
+		cc.Director:getInstance():getScheduler():scheduleScriptFunc(socketHandle, 0.1, false)
+	elseif cc.Application:getInstance():getTargetPlatform() == cc.PLATFORM_OS_WINDOWS then
+		socketHandle, debugXpCall = require("debug_win32.LuaDebugjit")("localhost", 7003, true) 
+		cc.Director:getInstance():getScheduler():scheduleScriptFunc(socketHandle, 0.1, false)
+	end
 end
--- if DEBUG > 1 then
--- 	release_print('debug only enabled when debug and no-crypto') 
--- 	local debugXpCall = nil
--- 	local socketHandle = nil
--- 	socketHandle, debugXpCall = require("debug.LuaDebug")("localhost", 7003) 
--- 	cc.Director:getInstance():getScheduler():scheduleScriptFunc(socketHandle, 0.1, false)
--- end
 
 local function main()
     -- cocos2dx的安卓开启LuaJit反而会导致性能下降

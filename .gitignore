@@ -19,6 +19,8 @@
 .idea
 .svn
 .externalNativeBuild
+**Debug.win32
+**.vs
 
 assets/
 project.xcworkspace/
@@ -42,3 +44,7 @@ hookheroes/tools/tolua/userconf.ini
 # 忽略Android本地配置文件
 **/local.properties
 
+simulator
+/frameworks/cocos2d-x/cocos/2d/Debug.win32
+/frameworks/cocos2d-x/cocos/editor-support/spine/proj.win32/Debug.win32
+/frameworks/cocos2d-x/cocos/scripting/lua-bindings/proj.win32/Debug.win32

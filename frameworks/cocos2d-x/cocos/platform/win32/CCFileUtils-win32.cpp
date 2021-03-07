@@ -107,7 +107,7 @@ bool FileUtilsWin32::init()
 {
     DECLARE_GUARD;
     _checkPath();
-    _defaultResRootPath = s_resourcePath + "Resources/";
+    _defaultResRootPath = s_resourcePath;
     return FileUtils::init();
 }
 

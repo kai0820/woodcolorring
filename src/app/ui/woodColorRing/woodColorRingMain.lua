@@ -253,6 +253,9 @@ function WoodColorRingMain:gameRestart()
 	self.gameNode:removeAllChildren()
 	self:initData()
 
+	self.newIdx = nil
+	self.newCellData = nil
+	self:updateScore()
 	self:gameControl()
 end
 
