@@ -6,8 +6,8 @@ local AudioMgr = {
 
 -- 所有音乐文件
 AudioMgr.AUDIO_ID = {
-	UI_BG = "ui_bg",
-	BUTTON = "button",
+	CLICK = "click",
+	GAME_BGM = "GameBgm",
 }
 
 -- 音乐文件存放的地方
@@ -29,7 +29,7 @@ AudioMgr.AUDIO_STATE = {
 }
 
 AudioMgr.PRELOAD_AUDIO = {
-	BG_MUSIC = BASE_DIR .. AudioMgr.AUDIO_ID.UI_BG .. EXT
+	BG_MUSIC = BASE_DIR .. AudioMgr.AUDIO_ID.GAME_BGM .. EXT
 }
 
 function AudioMgr:init()
@@ -212,9 +212,9 @@ function AudioMgr:_playMusic(fullname)
 end
 
 function AudioMgr:_playEffect(fullname)
-	audio_engine:preload(fullname, function(is_success)
-		if is_success then
-			Logger.printInfo("AudioManager play2d effect: " .. fullname)
+	-- audio_engine:preload(fullname, function(is_success)
+	-- 	if is_success then
+			Log.print("AudioManager play2d effect: " .. fullname)
 			local cur_id = audio_engine:play2d(fullname, false, self.effect_volume)
 			self._effect_ids[#self._effect_ids + 1] = cur_id
 			-- 音效播放结束，移除记录的音效 ID
@@ -226,8 +226,8 @@ function AudioMgr:_playEffect(fullname)
 					end
 				end
 			end)
-		end
-	end)
+		-- end
+	-- end)
 	-- print("AudioMgr play2d effect: " .. fullname)
 	-- local profile = cc.AudioProfile:new()
 	-- profile.name = fullname

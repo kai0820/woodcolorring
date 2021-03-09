@@ -21,17 +21,17 @@ function WoodColorRingUtil:createCell(data)
 
 	local bigNum, midNum, smallNum = self:getDataInfo(data)
 	if bigNum > 0 then
-		local cellImage = self:createCellColor(bigNum, 2)
+		local cellImage = self:createCellColor(bigNum, 1)
 		cellImage:setPosition(cc.p(size.width*0.5, size.height*0.5))
 		widget:addChild(cellImage)
 	end
 	if midNum > 0 then
-		local cellImage = self:createCellColor(midNum, 1)
+		local cellImage = self:createCellColor(midNum, 2)
 		cellImage:setPosition(cc.p(size.width*0.5, size.height*0.5))
 		widget:addChild(cellImage)
 	end
 	if smallNum > 0 then
-		local cellImage = self:createCellColor(smallNum, 0)
+		local cellImage = self:createCellColor(smallNum, 3)
 		cellImage:setPosition(cc.p(size.width*0.5, size.height*0.5))
 		widget:addChild(cellImage)
 	end
@@ -40,7 +40,7 @@ function WoodColorRingUtil:createCell(data)
 end
 
 function WoodColorRingUtil:createCellColor(color, ntype)
-	local url = "common/color_" .. color .. "_" .. ntype .. ".png"
+	local url = "colorring/color_ring_" .. color .. "_" .. ntype .. ".png"
 	local cellImage = fs.Image:create(url)
 	-- if color == WoodColorRingCore.COLOR.COLOR1 then
 	-- 	cellImage = fs.Image:create("common/public_item_box_1_1.png")

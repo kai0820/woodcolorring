@@ -33,17 +33,18 @@ function __G__TRACKBACK__(msg)
     release_print("LUA ERROR: " .. tostring(error_msg))
     release_print("----------------------------------------")
 end
-
+print("========================asdasdas", cc.Application:getInstance():getTargetPlatform(), cc.PLATFORM_OS_WINDOWS)
 if DEBUG > 1 then
     local debugXpCall = nil
     local socketHandle = nil
-	if cc.Application:getInstance():getTargetPlatform() == cc.PLATFORM_OS_MAC then
-		socketHandle, debugXpCall = require("debug.LuaDebug")("localhost", 7003) 
-		cc.Director:getInstance():getScheduler():scheduleScriptFunc(socketHandle, 0.1, false)
-	elseif cc.Application:getInstance():getTargetPlatform() == cc.PLATFORM_OS_WINDOWS then
+	-- if cc.Application:getInstance():getTargetPlatform() == cc.PLATFORM_OS_MAC then
+	-- 	socketHandle, debugXpCall = require("debug.LuaDebug")("localhost", 7003) 
+	-- 	cc.Director:getInstance():getScheduler():scheduleScriptFunc(socketHandle, 0.1, false)
+	-- elseif cc.Application:getInstance():getTargetPlatform() == cc.PLATFORM_OS_WINDOWS then
+		print("========================asdasdas")
 		socketHandle, debugXpCall = require("debug_win32.LuaDebugjit")("localhost", 7003, true) 
 		cc.Director:getInstance():getScheduler():scheduleScriptFunc(socketHandle, 0.1, false)
-	end
+	-- end
 end
 
 local function main()

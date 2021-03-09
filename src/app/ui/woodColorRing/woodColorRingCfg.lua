@@ -1,8 +1,9 @@
 local WoodColorRingCfg = {}
 
-WoodColorRingCfg.CELL_SIZE = cc.size(158, 158)
-WoodColorRingCfg.TOP_BG_SIZE = cc.size(494, 494)
-WoodColorRingCfg.BOTTOM_BG_SIZE = cc.size(494, 178)
+WoodColorRingCfg.CELL_SIZE1 = cc.size(218, 218)
+WoodColorRingCfg.CELL_SIZE = cc.size(220, 220)
+WoodColorRingCfg.TOP_BG_SIZE = cc.size(674, 674)
+WoodColorRingCfg.BOTTOM_BG_SIZE = cc.size(674, 178)
 
 WoodColorRingCfg.COMPOSE_SCORE = 200
 WoodColorRingCfg.SMALL_SCORE = 600

@@ -7,7 +7,9 @@ local WoodColorRingCfg = require "app.ui.woodColorRing.woodColorRingCfg"
 
 WoodColorRingMain.RES = {
 	[ResMgr.RES_TYPE.PLIST] = {
-		"images/common",
+		-- "images/common",
+		"images/colorring",
+		"images/colormain",
 	},
 	[ResMgr.RES_TYPE.SPINE_JSON] = {
 	}
@@ -54,7 +56,10 @@ function WoodColorRingMain:init()
 	self:initData()
 	self:initUI()
 	self:initBG()
+	self:updateScore()
 	self:gameControl()
+
+	AudioMgr:playBackgroundMusic(AudioMgr.AUDIO_ID.GAME_BGM)
 end
 
 function WoodColorRingMain:initData()
@@ -63,27 +68,45 @@ function WoodColorRingMain:initData()
 end
 
 function WoodColorRingMain:initUI()
-	-- local closeBtn = UIHelper:createBackBtn({})
-	-- self.root:addChild(closeBtn)
-	-- closeBtn:addClickEventListener(function(sender)
-	-- 	self:handleBackEvent()
-	-- end)
-
-	local boardBg = fs.Image:create("common/common_bg_2.png")
+	local boardBg = fs.Image:create("colormain/bg.png")
 	boardBg:setPosition(GConst.win_size.width*0.5, GConst.win_size.height*0.5)
 	self.root:addChild(boardBg)
 	self:scaleBGMgr(boardBg)
 
+	local topBottom = fs.Image:create("colormain/shang.png")
+	topBottom:setAnchorPoint(cc.p(0.5, 1))
+	topBottom:setPosition(cc.p(GConst.logical_size.width*0.5, GConst.logical_size.height))
+	self.ui_root:addChild(topBottom)
+
+	local boardBottom = fs.Image:create("colormain/bottom_bg_1.png")
+	boardBottom:setPosition(cc.p(GConst.logical_size.width*0.5, 100))
+	self.ui_root:addChild(boardBottom)
+
+	local bestScoreImg = fs.Image:create("colormain/best.png")
+	bestScoreImg:setPosition(cc.p(100, GConst.logical_size.height - 50))
+	self.ui_root:addChild(bestScoreImg)
+
+	local scoreImg = fs.Image:create("colormain/score.png")
+	scoreImg:setPosition(cc.p(GConst.logical_size.width*0.5, GConst.logical_size.height - 50))
+	self.ui_root:addChild(scoreImg)
+
 	local params = {}
-    params.str = "积分：" .. 0
-    params.size = 50
-    params.color = GConst.COLOR_TYPE.C3
-    -- params.outline_color = self.outline_color
+    params.str = 0
+    params.size = 24
+    params.color = GConst.COLOR_TYPE.C4
 	local label = LabHper:createFontTTF(params)
-	label:setAnchorPoint(cc.p(0, 0.5))
 	local width = GConst.logical_size.width*0.5 - WoodColorRingCfg.TOP_BG_SIZE.width*0.5
-	local height = GConst.logical_size.height*0.5 + 250 + WoodColorRingCfg.TOP_BG_SIZE.height*0.5
-	label:setPosition(cc.p(width, height))
+	local height = GConst.logical_size.height - 50
+	label:setPosition(cc.p(100, GConst.logical_size.height - 100))
+	self.ui_root:addChild(label)
+	self.bestScoreLab = label
+
+	local params = {}
+    params.str = 0
+    params.size = 26
+    params.color = GConst.COLOR_TYPE.C3
+	local label = LabHper:createFontTTF(params)
+	label:setPosition(cc.p(GConst.logical_size.width*0.5, GConst.logical_size.height - 100))
 	self.ui_root:addChild(label)
 	self.scoreLab = label
 
@@ -113,19 +136,24 @@ function WoodColorRingMain:initUI()
 end
 
 function WoodColorRingMain:initBG()
-	local boardTop = fs.Image:create("common/public_item_box_2.png")
+	local boardTop = fs.Image:create("colormain/top_bg_1.png")
 	boardTop:setScale9Enabled(true)
 	boardTop:setContentSize(WoodColorRingCfg.TOP_BG_SIZE)
-	boardTop:setPosition(cc.p(GConst.logical_size.width*0.5, GConst.logical_size.height*0.5 + 150))
-	self.ui_root:addChild(boardTop)
+	boardTop:setPosition(cc.p(GConst.logical_size.width*0.5, GConst.logical_size.height*0.5 + 100))
+	self.ui_root:addChild(boardTop, 10)
 	self.boardTop = boardTop
 
-	local boardBottom = fs.Image:create("common/public_item_box_2.png")
-	boardBottom:setScale9Enabled(true)
-	boardBottom:setContentSize(WoodColorRingCfg.BOTTOM_BG_SIZE)
-	boardBottom:setPosition(cc.p(GConst.logical_size.width*0.5, GConst.logical_size.height*0.5 - 250))
+	local boardBottom = cc.Node:create()
+	boardBottom:setPosition(cc.p(GConst.logical_size.width*0.5, 150))
 	self.ui_root:addChild(boardBottom)
 	self.boardBottom = boardBottom
+
+	local boardBottom1 = fs.Image:create("colormain/bottom_bg_3.png")
+	local boardBottom2 = fs.Image:create("colormain/bottom_bg_2.png")
+	-- boardBottom1:setPositionY(-50)
+	-- boardBottom2:setPositionY(-50)
+	boardBottom:addChild(boardBottom1)
+	boardBottom:addChild(boardBottom2)
 
 	for i,v in ipairs(self.allPos) do
 		local widget = fs.Widget:create()
@@ -191,7 +219,7 @@ function WoodColorRingMain:registerNewCellHandle()
 	self.newCell:setTouchEnabled(true)
 	self.newCell:addTouchEventListener(function(sender, state)
 		if state == ccui.TouchEventType.began then
-			-- AudioMgr:play(AudioMgr.AUDIO_ID.BUTTON)
+			AudioMgr:play(AudioMgr.AUDIO_ID.CLICK)
 			local beginPos = sender:getTouchBeganPosition()
 			local moveCell = self:createNewCell(self.newCellData)
 			moveCell:setPosition(beginPos)
@@ -233,7 +261,9 @@ function WoodColorRingMain:gameControl()
 
 	self.newCellData = data
 	local newCell = self:createNewCell(data)
-	newCell:setPosition(WoodColorRingCfg.BOTTOM_BG_SIZE.width*0.5, WoodColorRingCfg.BOTTOM_BG_SIZE.height*0.5)
+	newCell:setAnchorPoint(cc.p(0.5, 0))
+	-- newCell:setPosition(WoodColorRingCfg.BOTTOM_BG_SIZE.width*0.5, WoodColorRingCfg.BOTTOM_BG_SIZE.height*0.5)
+	-- newCell:setPosition(0, 30)
 	self.boardBottom:addChild(newCell)
 
 	self.newCell = newCell
@@ -319,7 +349,9 @@ end
 
 function WoodColorRingMain:updateScore()
 	local socre = WoodColorRingData:getScore()
-	self.scoreLab:setString("积分：" .. socre)
+	local bestSocre = WoodColorRingData:getBestScore()
+	self.scoreLab:setString(socre)
+	self.bestScoreLab:setString(bestSocre)
 end
 
 return WoodColorRingMain

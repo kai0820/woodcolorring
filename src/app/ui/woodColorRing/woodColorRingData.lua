@@ -5,9 +5,16 @@ local WoodColorRingUtil = require "app.ui.woodColorRing.woodColorRingUtil"
 
 function WoodColorRingData:init()
 	self._socre = 0
+	self._bestScore = 100
+	self._refreshNum = 5
+	self._doubleHitNum = 0
 	self._cellData = {
 		0,0,0,0,0,0,0,0,0
 	}
+end
+
+function WoodColorRingData:getBestScore()
+	return self._bestScore
 end
 
 function WoodColorRingData:getScore()
@@ -16,6 +23,9 @@ end
 
 function WoodColorRingData:addScore(score)
 	self._socre = self._socre + score
+	if self._socre > self._bestScore then
+		self._bestScore = self._socre
+	end
 end
 
 function WoodColorRingData:getCellData()

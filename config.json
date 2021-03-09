@@ -3,8 +3,8 @@
        "isLandscape": false,
        "isWindowTop": false,
        "name": "woodcolorring",
-       "width": 456,
-       "height": 684,
+       "width": 576,
+       "height": 1024,
        "entry": "src/main.lua",
        "consolePort": 6050,
        "uploadPort": 6060
