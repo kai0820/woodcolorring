@@ -37,14 +37,10 @@ function AudioMgr:init()
 	self._music_id = self.INVALID_ID
 	-- 记录音效 id
 	self._effect_ids = {}
-	-- self.bg_music_enabled = --UserData.getBool(--UserData.KEYS.MUSIC_BG, true)
-	-- self.effect_enabled = --UserData.getBool(--UserData.KEYS.MUSIC_FX, true)
-	-- self.bg_music_volume = --UserData.getInt(--UserData.KEYS.MUSIC_BG_VOLUME, 100) / 100
-	-- self.effect_volume = --UserData.getInt(--UserData.KEYS.MUSIC_FX_VOLUME, 100) / 100
-	self.bg_music_enabled = true
-	self.effect_enabled = true
-	self.bg_music_volume =  100 / 100
-	self.effect_volume = 100 / 100
+	self.bg_music_enabled = UserData.getBool(UserData.KEYS.MUSIC_BG, true)
+	self.effect_enabled = UserData.getBool(UserData.KEYS.MUSIC_FX, true)
+	self.bg_music_volume = UserData.getInt(UserData.KEYS.MUSIC_BG_VOLUME, 100) / 100
+	self.effect_volume = UserData.getInt(UserData.KEYS.MUSIC_FX_VOLUME, 100) / 100
 end
 
 -- 背景音乐是否生效
@@ -56,10 +52,10 @@ end
 function AudioMgr:setBackgroundMusicEnabled(b)
 	if self.bg_music_enabled ~= b then
 		self.bg_music_enabled = b
-		--UserData.setBool(--UserData.KEYS.MUSIC_BG, self.bg_music_enabled)
+		UserData.setBool(UserData.KEYS.MUSIC_BG, self.bg_music_enabled)
 		local is_playing = self:isBackgroundMusicPlaying()
 		if self.bg_music_enabled and not is_playing then
-			self:playBackgroundMusic(self.AUDIO_ID.UI_BG)
+			self:playBackgroundMusic(self.AUDIO_ID.GAME_BGM)
 		elseif not self.bg_music_enabled and is_playing then
 			self:stopBackgroundMusic()
 		end
@@ -119,7 +115,7 @@ end
 function AudioMgr:setEffectEnabled(b)
 	if self.effect_enabled ~= b then
 		self.effect_enabled = b
-		--UserData.setBool(--UserData.KEYS.MUSIC_FX, b)
+		UserData.setBool(UserData.KEYS.MUSIC_FX, b)
 	end
 end
 
@@ -141,9 +137,17 @@ function AudioMgr:setBackgroundMusicVolume(volume)
 	elseif self:isBackgroundMusicEnabled() and volume == 0 then
 		self:setBackgroundMusicEnabled(false)
 	end
-	--UserData.setInt(--UserData.KEYS.MUSIC_BG_VOLUME, volume * 100)
+	UserData.setInt(UserData.KEYS.MUSIC_BG_VOLUME, volume * 100)
 	self.bg_music_volume = volume
 	audio_engine:setVolume(self._music_id, volume)
+end
+
+function AudioMgr:backgroundMusicEnabled()
+	if self.bg_music_volume > 0 then
+		self:setBackgroundMusicVolume(0)
+	else
+		self:setBackgroundMusicVolume(100)
+	end
 end
 
 function AudioMgr:getEffectsVolume()
@@ -156,9 +160,17 @@ function AudioMgr:setEffectsVolume(volume)
 	elseif self:isEffectEnabled() and volume == 0 then
 		self:setEffectEnabled(false)
 	end
-	--UserData.setInt(--UserData.KEYS.MUSIC_FX_VOLUME, volume * 100)
+	UserData.setInt(UserData.KEYS.MUSIC_FX_VOLUME, volume * 100)
 	-- 下一次播放音效时，会使用此音量
 	self.effect_volume = volume
+end
+
+function AudioMgr:effectsVolumeEnabled()
+	if self.effect_volume > 0 then
+		self:setEffectsVolume(0)
+	else
+		self:setEffectsVolume(100)
+	end
 end
 
 -- 播放一个音效

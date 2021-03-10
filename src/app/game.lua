@@ -55,6 +55,8 @@ function Game:initModule()
 end
 
 function Game:loadScript()
+    cc.exports.UserData = require "app.data.userData"
+    
     cc.exports.Log = require "app.tools.log"
     cc.exports.View = require "app.tools.view"
     -- cc.exports.Logger = require "app.tools.logger"

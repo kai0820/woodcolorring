@@ -54,7 +54,6 @@ end
 function WoodColorRingMain:init()
 	self:loadRes()
 	self:initData()
-	self:initUI()
 	self:initBG()
 	self:updateScore()
 	self:gameControl()
@@ -67,20 +66,22 @@ function WoodColorRingMain:initData()
 	WoodColorRingCore:init()
 end
 
-function WoodColorRingMain:initUI()
+function WoodColorRingMain:initBG()
 	local boardBg = fs.Image:create("colormain/bg.png")
 	boardBg:setPosition(GConst.win_size.width*0.5, GConst.win_size.height*0.5)
 	self.root:addChild(boardBg)
 	self:scaleBGMgr(boardBg)
 
+	self:initTopBG()
+	self:initMidBG()
+	self:initBottomBG()
+end
+
+function WoodColorRingMain:initTopBG()
 	local topBottom = fs.Image:create("colormain/shang.png")
 	topBottom:setAnchorPoint(cc.p(0.5, 1))
 	topBottom:setPosition(cc.p(GConst.logical_size.width*0.5, GConst.logical_size.height))
 	self.ui_root:addChild(topBottom)
-
-	local boardBottom = fs.Image:create("colormain/bottom_bg_1.png")
-	boardBottom:setPosition(cc.p(GConst.logical_size.width*0.5, 100))
-	self.ui_root:addChild(boardBottom)
 
 	local bestScoreImg = fs.Image:create("colormain/best.png")
 	bestScoreImg:setPosition(cc.p(100, GConst.logical_size.height - 50))
@@ -96,7 +97,7 @@ function WoodColorRingMain:initUI()
     params.color = GConst.COLOR_TYPE.C4
 	local label = LabHper:createFontTTF(params)
 	local width = GConst.logical_size.width*0.5 - WoodColorRingCfg.TOP_BG_SIZE.width*0.5
-	local height = GConst.logical_size.height - 50
+	local height = GConst.logical_size.height - 75
 	label:setPosition(cc.p(100, GConst.logical_size.height - 100))
 	self.ui_root:addChild(label)
 	self.bestScoreLab = label
@@ -110,50 +111,52 @@ function WoodColorRingMain:initUI()
 	self.ui_root:addChild(label)
 	self.scoreLab = label
 
+	local effectVolumeBtn
+	local function updateEffectsVolumeBtn()
+		if AudioMgr:getEffectsVolume() > 0 then
+			effectVolumeBtn:loadTextureNormal("colormain/effect_volume_1.png")
+		else
+			effectVolumeBtn:loadTextureNormal("colormain/effect_volume_2.png")
+		end
+	end
 	local params = {}
-	params.nor = "common/public_btn_refresh.png"
-	local refreshBtn = fs.Button:create(params)
-	refreshBtn:addClickEventListener(function(sender)
-		self:gameControl()
+	params.nor = "colormain/effect_volume_1.png"
+	effectVolumeBtn = fs.Button:create(params)
+	effectVolumeBtn:addClickEventListener(function(sender)
+		AudioMgr:effectsVolumeEnabled()
+		updateEffectsVolumeBtn()
 	end)
-	refreshBtn:setAnchorPoint(cc.p(1, 0.5))
-	local width = GConst.logical_size.width*0.5 + WoodColorRingCfg.TOP_BG_SIZE.width*0.5
-	refreshBtn:setPosition(width, height)
-	self.ui_root:addChild(refreshBtn)
+	effectVolumeBtn:setPosition(GConst.logical_size.width - 75*2, height)
+	self.ui_root:addChild(effectVolumeBtn)
+	updateEffectsVolumeBtn()
 
+	local musicVolumeBtn
+	local function updateMusicVolumeBtn()
+		if AudioMgr:getBackgroundMusicVolume() > 0 then
+			musicVolumeBtn:loadTextureNormal("colormain/music_volume_1.png")
+		else
+			musicVolumeBtn:loadTextureNormal("colormain/music_volume_2.png")
+		end
+	end
 	local params = {}
-	params.nor = "common/public_btn_refresh.png"
-	local restartBtn = fs.Button:create(params)
-	restartBtn:addClickEventListener(function(sender)
-		GApi.showToast("重新开始")
-		self:gameRestart()
+	params.nor = "colormain/music_volume_1.png"
+	musicVolumeBtn = fs.Button:create(params)
+	musicVolumeBtn:addClickEventListener(function(sender)
+		AudioMgr:backgroundMusicEnabled()
+		updateMusicVolumeBtn()
 	end)
-	restartBtn:setColor(cc.c3b(255, 0, 0))
-	restartBtn:setAnchorPoint(cc.p(1, 0.5))
-	local width = GConst.logical_size.width*0.5 + WoodColorRingCfg.TOP_BG_SIZE.width*0.5 - 66
-	restartBtn:setPosition(width, height)
-	self.ui_root:addChild(restartBtn)
+	musicVolumeBtn:setPosition(GConst.logical_size.width - 60, height)
+	self.ui_root:addChild(musicVolumeBtn)
+	updateMusicVolumeBtn()
 end
 
-function WoodColorRingMain:initBG()
+function WoodColorRingMain:initMidBG()
 	local boardTop = fs.Image:create("colormain/top_bg_1.png")
 	boardTop:setScale9Enabled(true)
 	boardTop:setContentSize(WoodColorRingCfg.TOP_BG_SIZE)
 	boardTop:setPosition(cc.p(GConst.logical_size.width*0.5, GConst.logical_size.height*0.5 + 100))
 	self.ui_root:addChild(boardTop, 10)
 	self.boardTop = boardTop
-
-	local boardBottom = cc.Node:create()
-	boardBottom:setPosition(cc.p(GConst.logical_size.width*0.5, 150))
-	self.ui_root:addChild(boardBottom)
-	self.boardBottom = boardBottom
-
-	local boardBottom1 = fs.Image:create("colormain/bottom_bg_3.png")
-	local boardBottom2 = fs.Image:create("colormain/bottom_bg_2.png")
-	-- boardBottom1:setPositionY(-50)
-	-- boardBottom2:setPositionY(-50)
-	boardBottom:addChild(boardBottom1)
-	boardBottom:addChild(boardBottom2)
 
 	for i,v in ipairs(self.allPos) do
 		local widget = fs.Widget:create()
@@ -167,6 +170,42 @@ function WoodColorRingMain:initBG()
 	local gameNode = cc.Node:create()
 	boardTop:addChild(gameNode)
 	self.gameNode = gameNode
+end
+
+function WoodColorRingMain:initBottomBG()
+	local boardBottom = fs.Image:create("colormain/bottom_bg_1.png")
+	boardBottom:setPosition(cc.p(GConst.logical_size.width*0.5, 100))
+	self.ui_root:addChild(boardBottom)
+
+	local boardNode = cc.Node:create()
+	boardNode:setPosition(cc.p(GConst.logical_size.width*0.5, 150))
+	self.ui_root:addChild(boardNode)
+	self.boardNode = boardNode
+
+	local boardBottom1 = fs.Image:create("colormain/bottom_bg_3.png")
+	local boardBottom2 = fs.Image:create("colormain/bottom_bg_2.png")
+	boardNode:addChild(boardBottom1)
+	boardNode:addChild(boardBottom2)
+
+	local params = {}
+	params.nor = "common/public_btn_refresh.png"
+	local refreshBtn = fs.Button:create(params)
+	refreshBtn:addClickEventListener(function(sender)
+		GApi.showToast("刷新")
+		self:gameControl()
+	end)
+	refreshBtn:setPosition(-200, 0)
+	boardNode:addChild(refreshBtn)
+
+	local params = {}
+	params.nor = "common/public_btn_refresh.png"
+	local restartBtn = fs.Button:create(params)
+	restartBtn:addClickEventListener(function(sender)
+		GApi.showToast("重新开始")
+		self:gameRestart()
+	end)
+	restartBtn:setPosition(200, 0)
+	boardNode:addChild(restartBtn)
 end
 
 function WoodColorRingMain:updateCell(idx)
@@ -264,7 +303,7 @@ function WoodColorRingMain:gameControl()
 	newCell:setAnchorPoint(cc.p(0.5, 0))
 	-- newCell:setPosition(WoodColorRingCfg.BOTTOM_BG_SIZE.width*0.5, WoodColorRingCfg.BOTTOM_BG_SIZE.height*0.5)
 	-- newCell:setPosition(0, 30)
-	self.boardBottom:addChild(newCell)
+	self.boardNode:addChild(newCell)
 
 	self.newCell = newCell
 	self:registerNewCellHandle()
